@@ -37,11 +37,11 @@ def main():
         print("Solve Route")
         arcpy.na.Solve(layer_object)
 
-        #: Save the Route layer as a layer file on disk (however, the data in stored here: C:\Users\gbunce\AppData\Local\Temp\scratch.gdb)
+        #: Save the Route layer as a layer file on disk (however, the data in stored here: C:\Users\<username>\AppData\Local\Temp\scratch.gdb)
         print("Save Route as Layer File")
         layer_object.saveACopy(output_layer_file)
 
-        #: Export Route layers (from: C:\Users\gbunce\AppData\Local\Temp\scratch.gdb\Route\Routes) to fbdb feature classes
+        #: Export Route layers (from: C:\Users\<username>\AppData\Local\Temp\scratch.gdb\Route\Routes) to fbdb feature classes
         # List sublayers in layer_object Group and export Routes and Stops
         print("Export Route layer to fgdb feature classes.")
         for lyr in layer_object.listLayers():
