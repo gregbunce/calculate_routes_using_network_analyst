@@ -10,7 +10,7 @@ strDate = str(today.month).zfill(2) + str(today.day).zfill(2) +  str(today.year)
 #: Global variables
 networkdataset_path = "C:/Users/gbunce/Documents/projects/NetworkDataset/RecentBuilds/2021_5_6/UtahRoadsNetworkAnalysis.gdb/NetworkDataset/UtahRoadsNetwork"
 input_stops = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/stops.gdb/testing_stops"
-input_stops_routename_field = "RouteName" # this field will be used to create separate routes based on unique group id
+input_stops_routename_field = "RouteName" # this field will be used to create separate routes based on unique group id. it allows you to generate multiple routes in a single analysis. You can group stops into separate routes using their RouteName field values; one route is generated for each group.
 output_layer_file = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/routes_lyr_" + strDate + ".lyrx" # this layer can only be viewed in Pro applications
 output_route_fgdb = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/output_routes.gdb"
 
@@ -29,9 +29,9 @@ def main():
         #: Get the layer object from the result object. The Route layer can now be referenced using the layer object.
         layer_object = result_object.getOutput(0)
 
-        #: Add Stops (these will be the locations in which the distance between them will be calculated) (the input_stops must have a field named RouteName)
+        #: Add Stops (these will be the locations in which the distance between them will be calculated)
         print("Add Route Locations")
-        arcpy.na.AddLocations(layer_object, "Stops", input_stops, "Name # #;RouteName RouteName #;Sequence # #;TimeWindowStart # #;TimeWindowEnd # #;LocationType # 0;CurbApproach # 0;Attr_TravelMinutes # 0;Attr_Length # 0", "5000 Meters", None, "'Roads : Limited Access & Ramps' SHAPE;'Roads : Other' SHAPE;UtahRoadsNetwork_Junctions NONE", "MATCH_TO_CLOSEST", "APPEND", "NO_SNAP", "5 Meters", "EXCLUDE", None)
+        arcpy.na.AddLocations(layer_object, "Stops", input_stops, "Name # #;RouteName " + input_stops_routename_field + " #;Sequence # #;TimeWindowStart # #;TimeWindowEnd # #;LocationType # 0;CurbApproach # 0;Attr_TravelMinutes # 0;Attr_Length # 0", "5000 Meters", None, "'Roads : Limited Access & Ramps' SHAPE;'Roads : Other' SHAPE;UtahRoadsNetwork_Junctions NONE", "MATCH_TO_CLOSEST", "APPEND", "NO_SNAP", "5 Meters", "EXCLUDE", None)
 
         #: Solve the Route layer.
         print("Solve Route")
