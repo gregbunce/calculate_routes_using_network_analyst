@@ -1,6 +1,6 @@
 # Calculate Routes
 
-The calculate_routes.py script in this repo creates routes between two or more points using an esri road centerline network dataset.  These routes are calculated using the [UGRC's](https://gis.utah.gov/) Statewide [Street Network Dataset](https://gis.utah.gov/data/transportation/street-network-analysis/#StreetNetwork), which is built from [UGRC's](https://gis.utah.gov/) statewide [Road Centerline](https://gis.utah.gov/data/transportation/roads-system/#RoadCenterlines) GIS layer.
+The [calculate_routes.py](https://github.com/gregbunce/calculate_routes_using_network_analyst/blob/master/calculate_routes.py) script in this repo creates routes between two or more points using an esri road centerline network dataset.  These routes are calculated using the [UGRC's](https://gis.utah.gov/) Statewide [Street Network Dataset](https://gis.utah.gov/data/transportation/street-network-analysis/#StreetNetwork), which is built from [UGRC's](https://gis.utah.gov/) statewide [Road Centerline](https://gis.utah.gov/data/transportation/roads-system/#RoadCenterlines) GIS layer.
 
 This script requires an esri [network analyst](https://www.esri.com/en-us/arcgis/products/arcgis-network-analyst/overview) license.
 
