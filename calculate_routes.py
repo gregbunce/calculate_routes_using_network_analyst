@@ -3,7 +3,7 @@ from arcpy import mp
 import os
 from datetime import date
 
-# get the date
+#: Get today's date.
 today = date.today()
 strDate = str(today.month).zfill(2) + str(today.day).zfill(2) +  str(today.year)
 
@@ -14,6 +14,7 @@ input_stops_routename_field = "RouteName" # this field will be used to create se
 output_layer_file = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/routes_lyr_" + strDate + ".lyrx" # this layer can only be viewed in Pro applications
 output_route_fgdb = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/output_routes.gdb"
 
+#: This function creates routes from a list of point locations.
 def main():
     try:
         #: Check out network analyst extension.
