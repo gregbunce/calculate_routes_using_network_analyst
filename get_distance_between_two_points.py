@@ -1,12 +1,18 @@
 import arcpy
-from arcpy import env
+from arcpy import mp
 import os
+from datetime import date
+
+# get the date
+today = date.today()
+strDate = str(today.month).zfill(2) + str(today.day).zfill(2) +  str(today.year)
 
 #: Global variables
 networkdataset_path = "C:/Users/gbunce/Documents/projects/NetworkDataset/RecentBuilds/2021_5_6/UtahRoadsNetworkAnalysis.gdb/NetworkDataset/UtahRoadsNetwork"
-networkdataset_layer_name = "UtahRoadsNetwork"
 input_stops = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/stops.gdb/testing_stops"
-output_layer_file = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/testing_lyr.lyrx" # this layer can only be viewed in Pro applications
+input_stops_routename_field = "RouteName" # this field will be used to create separate routes based on unique group id
+output_layer_file = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/routes_lyr_" + strDate + ".lyrx" # this layer can only be viewed in Pro applications
+output_route_fgdb = "C:/Users/gbunce/Documents/projects/network_analyst_distance_between_two_points/output_routes.gdb"
 
 def main():
     try:
@@ -16,20 +22,33 @@ def main():
         else:
             raise arcpy.ExecuteError("Network Analyst Extension license is not available.")
 
-        # Create a network dataset layer. The layer will be referenced using its name.
+        # Create a network dataset layer.
+        print("Make Route Layer")
         result_object = arcpy.na.MakeRouteAnalysisLayer(networkdataset_path, "Route", '', "USE_CURRENT_ORDER", None, "LOCAL_TIME_AT_LOCATIONS", "ALONG_NETWORK", None, "DIRECTIONS", "LOCAL_TIME_AT_LOCATIONS")
 
-        #: Get the layer object from the result object. The route layer can now be referenced using the layer object.
+        #: Get the layer object from the result object. The Route layer can now be referenced using the layer object.
         layer_object = result_object.getOutput(0)
 
-        #: Add Stops (these will be the locations in which the distance between them will be calculated)
+        #: Add Stops (these will be the locations in which the distance between them will be calculated) (the input_stops must have a field named RouteName)
+        print("Add Route Locations")
         arcpy.na.AddLocations(layer_object, "Stops", input_stops, "Name # #;RouteName RouteName #;Sequence # #;TimeWindowStart # #;TimeWindowEnd # #;LocationType # 0;CurbApproach # 0;Attr_TravelMinutes # 0;Attr_Length # 0", "5000 Meters", None, "'Roads : Limited Access & Ramps' SHAPE;'Roads : Other' SHAPE;UtahRoadsNetwork_Junctions NONE", "MATCH_TO_CLOSEST", "APPEND", "NO_SNAP", "5 Meters", "EXCLUDE", None)
 
-        #: Solve the closest facility layer.
+        #: Solve the Route layer.
+        print("Solve Route")
         arcpy.na.Solve(layer_object)
 
-        #: Save the solved closest facility layer as a layer file on disk
+        #: Save the Route layer as a layer file on disk (however, the data in stored here: C:\Users\gbunce\AppData\Local\Temp\scratch.gdb)
+        print("Save Route as Layer File")
         layer_object.saveACopy(output_layer_file)
+
+        #: Export Route layers (from: C:\Users\gbunce\AppData\Local\Temp\scratch.gdb\Route\Routes) to fbdb feature classes
+        # List sublayers in NALayer Group and export each
+        print("Export Route layer to fgdb feature classes.")
+        for lyr in layer_object.listLayers():
+            if lyr.isGroupLayer:
+                continue
+            if str(lyr.name).startswith('Routes') or str(lyr.name).startswith('Stops'):
+                arcpy.management.CopyFeatures(lyr, os.path.join(output_route_fgdb, lyr.name + strDate))
 
         #: Done
         print("Script completed successfully")
@@ -43,13 +62,3 @@ def main():
 
 #: Call the main function.
 main()
-
-#: resources:
-# https://pro.arcgis.com/en/pro-app/latest/tool-reference/network-analyst/solve.htm
-# https://pro.arcgis.com/en/pro-app/latest/arcpy/network-analyst/performing-network-analysis.htm
-# https://pro.arcgis.com/en/pro-app/latest/arcpy/network-analyst/route.htm
-# https://pro.arcgis.com/en/pro-app/latest/help/analysis/networks/route-tutorial.htm
-# https://pro.arcgis.com/en/pro-app/latest/help/analysis/networks/route-analysis-layer.htm
-
-
-
