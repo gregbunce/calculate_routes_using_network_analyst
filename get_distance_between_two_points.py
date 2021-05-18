@@ -42,7 +42,7 @@ def main():
         layer_object.saveACopy(output_layer_file)
 
         #: Export Route layers (from: C:\Users\gbunce\AppData\Local\Temp\scratch.gdb\Route\Routes) to fbdb feature classes
-        # List sublayers in NALayer Group and export each
+        # List sublayers in layer_object Group and export Routes and Stops
         print("Export Route layer to fgdb feature classes.")
         for lyr in layer_object.listLayers():
             if lyr.isGroupLayer:
